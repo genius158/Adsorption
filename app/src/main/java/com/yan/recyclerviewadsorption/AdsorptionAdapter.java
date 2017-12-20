@@ -59,15 +59,15 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
         final View item = holder.itemView;
         item.setTag(R.id.tag_adsorption, items.get(position));
         item.setTag(R.id.tag_position, position);
-
+        AdsorptionDataAdapter ada = (AdsorptionDataAdapter) items.get(position);
         if (getItemViewType(position) == ADSORPTION_TYPE) {
             TextView tv = item.findViewById(R.id.tv);
-            tv.setText(((AdsorptionItem) ((AdsorptionDataAdapter) items.get(position)).adsorptionData).strIndex);
+            tv.setText(((AdsorptionItem) ada.adsorptionData).strIndex);
             return;
         }
 
         ImageView iv = item.findViewById(R.id.iv);
-        iv.setImageDrawable(ContextCompat.getDrawable(context, ((DataItem) ((AdsorptionDataAdapter) items.get(position)).itemData).resId));
+        iv.setImageDrawable(ContextCompat.getDrawable(context, ((DataItem) ada.itemData).resId));
     }
 
     private void onAdsorptionViewLoad() {
@@ -108,8 +108,8 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
             float baseY = recyclerView.getY();
 
             if (adsorption.isAdsorption) {
-                adsorptionView.setTranslationY(adsorptionAreaView.getY() - adsorptionView.getHeight() + baseY);
                 setAdsorptionData(adsorptionOutView);
+                adsorptionView.setTranslationY(adsorptionAreaView.getY() - adsorptionView.getHeight() + baseY);
             } else {
                 setAdsorptionData(adsorptionAreaView);
                 if (adsorptionView.getTranslationY() != baseY) {
