@@ -50,8 +50,7 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
             return new RecyclerView.ViewHolder(typeView) {
             };
         }
-        return new RecyclerView.ViewHolder(
-                LayoutInflater.from(context).inflate(R.layout.item, parent, false)) {
+        return new RecyclerView.ViewHolder(LayoutInflater.from(context).inflate(R.layout.item, parent, false)) {
         };
     }
 
