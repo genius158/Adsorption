@@ -106,6 +106,7 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
                 ItemAdsorptionAdapter ia = (ItemAdsorptionAdapter) items.get(i);
                 if (ia.itemData == null && ia.itemAdsorption == iaa.itemAdsorption) {
                     scrollToPosition = i;
+                    break;
                 }
             }
         }
