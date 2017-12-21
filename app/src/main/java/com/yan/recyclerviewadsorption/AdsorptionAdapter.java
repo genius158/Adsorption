@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MarginLayoutParamsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -123,7 +124,6 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
             ViewGroup viewGroup = (ViewGroup) recyclerView.getParent();
             if (adsorptionView == null) {
                 FrameLayout frameLayout = new FrameLayout(context);
-
                 frameLayout.setLayoutParams(recyclerView.getLayoutParams());
                 frameLayout.setPadding(recyclerView.getPaddingLeft(), recyclerView.getPaddingTop()
                         , recyclerView.getPaddingRight(), recyclerView.getPaddingBottom());
