@@ -31,8 +31,6 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
 
     private View adsorptionView;
 
-    private AsyncTask adsorptionPositionTask;
-
     public AdsorptionAdapter(Context context) {
         this.context = context;
     }
@@ -102,32 +100,19 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
 
     @SuppressLint("StaticFieldLeak")
     private void rvScrollTo(int adsorptionPosition) {
-        if (adsorptionPositionTask != null && !adsorptionPositionTask.isCancelled()) {
-            adsorptionPositionTask.cancel(true);
+        int scrollToPosition = -1;
+        ItemAdsorptionAdapter iaa = (ItemAdsorptionAdapter) items.get(adsorptionPosition);
+        if (iaa.isAdsorption) {
+            scrollToPosition = items.indexOf(iaa);
         }
-        adsorptionPositionTask = new AsyncTask<Integer, Void, Integer>() {
-            @Override
-            protected Integer doInBackground(Integer... datas) {
-                ItemAdsorptionAdapter iaa = (ItemAdsorptionAdapter) items.get(datas[0]);
-                if (iaa.isAdsorption) {
-                    return items.indexOf(iaa);
-                }
 
-                for (int i = 0; i < items.size(); i++) {
-                    ItemAdsorptionAdapter ia = (ItemAdsorptionAdapter) items.get(i);
-                    if (ia.itemData == null && ia.itemAdsorption == iaa.itemAdsorption) {
-                        return i;
-                    }
-                }
-                return null;
+        for (int i = 0; i < items.size(); i++) {
+            ItemAdsorptionAdapter ia = (ItemAdsorptionAdapter) items.get(i);
+            if (ia.itemData == null && ia.itemAdsorption == iaa.itemAdsorption) {
+                scrollToPosition = i;
             }
-
-            @Override
-            protected void onPostExecute(Integer integer) {
-                Log.e(TAG, "onPostExecute: " + integer);
-                recyclerView.smoothScrollToPosition(integer);
-            }
-        }.execute(adsorptionPosition);
+        }
+        recyclerView.smoothScrollToPosition(scrollToPosition);
     }
 
     private void onAdsorptionViewLoad() {
@@ -138,6 +123,7 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
             ViewGroup viewGroup = (ViewGroup) recyclerView.getParent();
             if (adsorptionView == null) {
                 FrameLayout frameLayout = new FrameLayout(context);
+
                 frameLayout.setLayoutParams(recyclerView.getLayoutParams());
                 frameLayout.setPadding(recyclerView.getPaddingLeft(), recyclerView.getPaddingTop()
                         , recyclerView.getPaddingRight(), recyclerView.getPaddingBottom());
@@ -178,10 +164,10 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
 
             ItemAdsorptionAdapter adsorption = (ItemAdsorptionAdapter) items.get(position);
             if (adsorption.isAdsorption) {
-                onAdsorptionDataSet(adsorption.itemAdsorption);
+                onAdsorptionDataSet(((ItemAdsorptionAdapter) items.get(outPosition)).itemAdsorption);
                 adsorptionView.setTranslationY(adsorptionAreaView.getY() - offsetY - adsorptionView.getHeight());
             } else {
-                onAdsorptionDataSet(((ItemAdsorptionAdapter) items.get(outPosition)).itemAdsorption);
+                onAdsorptionDataSet(adsorption.itemAdsorption);
                 if (adsorptionView.getTranslationY() != 0) {
                     adsorptionView.setTranslationY(0);
                 }
