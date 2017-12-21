@@ -2,6 +2,7 @@ package com.yan.recyclerviewadsorption;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -10,12 +11,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.List;
+
 /**
  * Created by yan on 2017/11/5
- * recyclerView do not set marginTop or paddingTop
  */
 public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.ViewHolder> {
     private static final String TAG = "AdsorptionAdapter";
@@ -77,10 +80,15 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
             }
             ViewGroup viewGroup = (ViewGroup) recyclerView.getParent();
             if (adsorptionView == null) {
-                adsorptionView = LayoutInflater.from(context).inflate(R.layout.adsorption, viewGroup, false);
+                FrameLayout frameLayout = new FrameLayout(context);
+                frameLayout.setLayoutParams(recyclerView.getLayoutParams());
+                viewGroup.addView(frameLayout);
+
+                adsorptionView = LayoutInflater.from(context).inflate(R.layout.adsorption, frameLayout, false);
                 adsorptionView.setOnClickListener(onAdsorptionClick);
 
-                viewGroup.addView(adsorptionView);
+                frameLayout.addView(adsorptionView);
+                frameLayout.setVisibility(View.INVISIBLE);
             }
             recyclerView.addOnScrollListener(onScrollListener);
 
@@ -101,19 +109,19 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             View adsorptionOutView = recyclerView.findChildViewUnder(0, 0);
-
             View adsorptionAreaView = recyclerView.findChildViewUnder(0, adsorptionView.getHeight());
+            if (adsorptionOutView == null || adsorptionAreaView == null) {
+                return;
+            }
             AdsorptionDataAdapter adsorption = (AdsorptionDataAdapter) adsorptionAreaView.getTag(R.id.tag_adsorption);
-
-            float baseY = recyclerView.getY();
 
             if (adsorption.isAdsorption) {
                 setAdsorptionData(adsorptionOutView);
-                adsorptionView.setTranslationY(adsorptionAreaView.getY() - adsorptionView.getHeight() + baseY);
+                adsorptionView.setTranslationY(adsorptionAreaView.getY() - adsorptionView.getHeight());
             } else {
                 setAdsorptionData(adsorptionAreaView);
-                if (adsorptionView.getTranslationY() != baseY) {
-                    adsorptionView.setTranslationY(baseY);
+                if (adsorptionView.getTranslationY() != 0) {
+                    adsorptionView.setTranslationY(0);
                 }
             }
         }
@@ -160,6 +168,13 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
                 }
             }
         }.execute(position);
+    }
+
+    @Override
+    public void replace(List<Object> update) {
+        super.replace(update);
+        View parent = (View) adsorptionView.getParent();
+        parent.setVisibility((update == null || update.isEmpty()) ? View.GONE : View.VISIBLE);
     }
 
     @Override
