@@ -63,7 +63,7 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
         }
 
         final View item = holder.itemView;
-        item.setTag(R.id.tag_adsorption, items.get(position));
+        item.setTag(R.id.tag_position, position);
 
         onItemDataSet(item, position);
     }
@@ -74,14 +74,12 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
      * @param objAdsorption
      * @return if data set
      */
-    private boolean onAdsorptionDataSet(Object objAdsorption) {
+    private void onAdsorptionDataSet(Object objAdsorption) {
         ItemAdsorption itemAdsorption = (ItemAdsorption) objAdsorption;
         TextView atv = adsorptionView.findViewById(R.id.tv);
         if (!TextUtils.equals(itemAdsorption.strIndex, atv.getText())) {
             atv.setText(itemAdsorption.strIndex);
-            return true;
         }
-        return false;
     }
 
     /**
@@ -103,20 +101,14 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
     }
 
     @SuppressLint("StaticFieldLeak")
-    private void setAdsorption(View v) {
-        ItemAdsorptionAdapter adsorption = (ItemAdsorptionAdapter) v.getTag(R.id.tag_adsorption);
-
-        if (adsorptionView.getTag() != null && !onAdsorptionDataSet(adsorption.itemAdsorption)) {
-            return;
-        }
-
+    private void rvScrollTo(int adsorptionPosition) {
         if (adsorptionPositionTask != null && !adsorptionPositionTask.isCancelled()) {
             adsorptionPositionTask.cancel(true);
         }
-        adsorptionPositionTask = new AsyncTask<ItemAdsorptionAdapter, Void, Integer>() {
+        adsorptionPositionTask = new AsyncTask<Integer, Void, Integer>() {
             @Override
-            protected Integer doInBackground(ItemAdsorptionAdapter... datas) {
-                ItemAdsorptionAdapter iaa = datas[0];
+            protected Integer doInBackground(Integer... datas) {
+                ItemAdsorptionAdapter iaa = (ItemAdsorptionAdapter) items.get(datas[0]);
                 if (iaa.isAdsorption) {
                     return items.indexOf(iaa);
                 }
@@ -132,9 +124,10 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
 
             @Override
             protected void onPostExecute(Integer integer) {
-                adsorptionView.setTag(integer);
+                Log.e(TAG, "onPostExecute: " + integer);
+                recyclerView.smoothScrollToPosition(integer);
             }
-        }.execute(adsorption);
+        }.execute(adsorptionPosition);
     }
 
     private void onAdsorptionViewLoad() {
@@ -165,8 +158,8 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
     private final View.OnClickListener onAdsorptionClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            final int adsorptionPosition = (int) v.getTag();
-            recyclerView.smoothScrollToPosition(adsorptionPosition);
+            final int adsorptionPosition = (int) v.getTag(R.id.tag_position);
+            rvScrollTo(adsorptionPosition);
         }
     };
 
@@ -179,13 +172,16 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
             if (adsorptionOutView == null || adsorptionAreaView == null) {
                 return;
             }
-            ItemAdsorptionAdapter adsorption = (ItemAdsorptionAdapter) adsorptionAreaView.getTag(R.id.tag_adsorption);
+            final int outPosition = (int) adsorptionOutView.getTag(R.id.tag_position);
+            final int position = (int) adsorptionAreaView.getTag(R.id.tag_position);
+            adsorptionView.setTag(R.id.tag_position, adsorptionOutView.getTag(R.id.tag_position));
 
+            ItemAdsorptionAdapter adsorption = (ItemAdsorptionAdapter) items.get(position);
             if (adsorption.isAdsorption) {
-                setAdsorption(adsorptionOutView);
+                onAdsorptionDataSet(adsorption.itemAdsorption);
                 adsorptionView.setTranslationY(adsorptionAreaView.getY() - offsetY - adsorptionView.getHeight());
             } else {
-                setAdsorption(adsorptionAreaView);
+                onAdsorptionDataSet(((ItemAdsorptionAdapter) items.get(outPosition)).itemAdsorption);
                 if (adsorptionView.getTranslationY() != 0) {
                     adsorptionView.setTranslationY(0);
                 }
