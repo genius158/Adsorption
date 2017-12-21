@@ -1,10 +1,7 @@
 package com.yan.recyclerviewadsorption;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MarginLayoutParamsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -99,7 +96,6 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
         iv.setImageDrawable(ContextCompat.getDrawable(context, ((ItemData) ada.itemData).resId));
     }
 
-    @SuppressLint("StaticFieldLeak")
     private void rvScrollTo(int adsorptionPosition) {
         int scrollToPosition = -1;
         ItemAdsorptionAdapter iaa = (ItemAdsorptionAdapter) items.get(adsorptionPosition);
