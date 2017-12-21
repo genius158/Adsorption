@@ -58,9 +58,39 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (adsorptionView.getTag() == null) {
+            onAdsorptionDataSet(((ItemAdsorptionAdapter) items.get(0)).itemAdsorption);
+        }
+
         final View item = holder.itemView;
         item.setTag(R.id.tag_adsorption, items.get(position));
 
+        onItemDataSet(item, position);
+    }
+
+    /**
+     * 可悬浮条目数据的设置
+     *
+     * @param objAdsorption
+     * @return if data set
+     */
+    private boolean onAdsorptionDataSet(Object objAdsorption) {
+        ItemAdsorption itemAdsorption = (ItemAdsorption) objAdsorption;
+        TextView atv = adsorptionView.findViewById(R.id.tv);
+        if (!TextUtils.equals(itemAdsorption.strIndex, atv.getText())) {
+            atv.setText(itemAdsorption.strIndex);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * RecyclerView内部布局数据的设置
+     *
+     * @param item
+     * @param position
+     */
+    private void onItemDataSet(View item, int position) {
         ItemAdsorptionAdapter ada = (ItemAdsorptionAdapter) items.get(position);
         if (getItemViewType(position) == ADSORPTION_TYPE) {
             TextView tv = item.findViewById(R.id.tv);
@@ -72,72 +102,13 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
         iv.setImageDrawable(ContextCompat.getDrawable(context, ((ItemData) ada.itemData).resId));
     }
 
-    private void onAdsorptionViewLoad() {
-        try {
-            if (recyclerView.getParent() == null) {
-                throw new RuntimeException("RecyclerView must put in a ViewGroup");
-            }
-            ViewGroup viewGroup = (ViewGroup) recyclerView.getParent();
-            if (adsorptionView == null) {
-                FrameLayout frameLayout = new FrameLayout(context);
-                frameLayout.setLayoutParams(recyclerView.getLayoutParams());
-                viewGroup.addView(frameLayout);
-
-                adsorptionView = LayoutInflater.from(context).inflate(R.layout.adsorption, frameLayout, false);
-                adsorptionView.setOnClickListener(onAdsorptionClick);
-
-                frameLayout.addView(adsorptionView);
-                frameLayout.setVisibility(View.INVISIBLE);
-            }
-            recyclerView.addOnScrollListener(onScrollListener);
-
-        } catch (Exception e) {
-            Log.w(TAG, "onAttachedToRecyclerView: " + e.getMessage());
-        }
-    }
-
-    private final View.OnClickListener onAdsorptionClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (v.getTag() == null) {
-                return;
-            }
-            final int adsorptionPosition = (int) v.getTag();
-            recyclerView.smoothScrollToPosition(adsorptionPosition);
-        }
-    };
-
-    private final RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            View adsorptionOutView = recyclerView.findChildViewUnder(0, 0);
-            View adsorptionAreaView = recyclerView.findChildViewUnder(0, adsorptionView.getHeight());
-            if (adsorptionOutView == null || adsorptionAreaView == null) {
-                return;
-            }
-            ItemAdsorptionAdapter adsorption = (ItemAdsorptionAdapter) adsorptionAreaView.getTag(R.id.tag_adsorption);
-
-            if (adsorption.isAdsorption) {
-                setAdsorptionData(adsorptionOutView);
-                adsorptionView.setTranslationY(adsorptionAreaView.getY() - adsorptionView.getHeight());
-            } else {
-                setAdsorptionData(adsorptionAreaView);
-                if (adsorptionView.getTranslationY() != 0) {
-                    adsorptionView.setTranslationY(0);
-                }
-            }
-        }
-    };
-
     @SuppressLint("StaticFieldLeak")
-    private void setAdsorptionData(View v) {
+    private void setAdsorption(View v) {
         ItemAdsorptionAdapter adsorption = (ItemAdsorptionAdapter) v.getTag(R.id.tag_adsorption);
-        TextView tv = adsorptionView.findViewById(R.id.tv);
-        String data = ((ItemAdsorption) adsorption.itemAdsorption).strIndex;
-        if (adsorptionView.getTag() != null && TextUtils.equals(tv.getText(), data)) {
+
+        if (adsorptionView.getTag() != null && !onAdsorptionDataSet(adsorption.itemAdsorption)) {
             return;
         }
-        tv.setText(((ItemAdsorption) adsorption.itemAdsorption).strIndex);
 
         if (adsorptionPositionTask != null && !adsorptionPositionTask.isCancelled()) {
             adsorptionPositionTask.cancel(true);
@@ -165,6 +136,62 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
             }
         }.execute(adsorption);
     }
+
+    private void onAdsorptionViewLoad() {
+        try {
+            if (recyclerView.getParent() == null) {
+                throw new RuntimeException("RecyclerView must put in a ViewGroup");
+            }
+            ViewGroup viewGroup = (ViewGroup) recyclerView.getParent();
+            if (adsorptionView == null) {
+                FrameLayout frameLayout = new FrameLayout(context);
+                frameLayout.setLayoutParams(recyclerView.getLayoutParams());
+                frameLayout.setPadding(recyclerView.getPaddingLeft(), recyclerView.getPaddingTop()
+                        , recyclerView.getPaddingRight(), recyclerView.getPaddingBottom());
+                viewGroup.addView(frameLayout);
+
+                adsorptionView = LayoutInflater.from(context).inflate(R.layout.adsorption, frameLayout, false);
+                adsorptionView.setOnClickListener(onAdsorptionClick);
+
+                frameLayout.addView(adsorptionView);
+                frameLayout.setVisibility(View.INVISIBLE);
+            }
+            recyclerView.addOnScrollListener(onScrollListener);
+        } catch (Exception e) {
+            Log.w(TAG, "onAttachedToRecyclerView: " + e.getMessage());
+        }
+    }
+
+    private final View.OnClickListener onAdsorptionClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            final int adsorptionPosition = (int) v.getTag();
+            recyclerView.smoothScrollToPosition(adsorptionPosition);
+        }
+    };
+
+    private final RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            final int offsetY = recyclerView.getPaddingTop();
+            View adsorptionOutView = recyclerView.findChildViewUnder(0, offsetY);
+            View adsorptionAreaView = recyclerView.findChildViewUnder(0, offsetY + adsorptionView.getHeight());
+            if (adsorptionOutView == null || adsorptionAreaView == null) {
+                return;
+            }
+            ItemAdsorptionAdapter adsorption = (ItemAdsorptionAdapter) adsorptionAreaView.getTag(R.id.tag_adsorption);
+
+            if (adsorption.isAdsorption) {
+                setAdsorption(adsorptionOutView);
+                adsorptionView.setTranslationY(adsorptionAreaView.getY() - offsetY - adsorptionView.getHeight());
+            } else {
+                setAdsorption(adsorptionAreaView);
+                if (adsorptionView.getTranslationY() != 0) {
+                    adsorptionView.setTranslationY(0);
+                }
+            }
+        }
+    };
 
     @Override
     public void replace(List<Object> update) {
