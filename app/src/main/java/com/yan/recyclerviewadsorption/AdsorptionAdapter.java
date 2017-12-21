@@ -1,7 +1,6 @@
 package com.yan.recyclerviewadsorption;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -18,8 +17,6 @@ import java.util.List;
  * Created by yan on 2017/11/5
  */
 public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.ViewHolder> {
-    private static final String TAG = "AdsorptionAdapter";
-
     private final int ADSORPTION_TYPE = 1;
     private final int DATA_TYPE = 2;
 
@@ -64,15 +61,19 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
         onItemDataSet(item, position);
     }
 
+    private void onAdsorptionDataSet(Object objAdsorption) {
+        onAdsorptionItemSet(adsorptionView, objAdsorption);
+    }
+
     /**
      * 可悬浮条目数据的设置
      *
      * @param objAdsorption
      * @return if data set
      */
-    private void onAdsorptionDataSet(Object objAdsorption) {
+    private void onAdsorptionItemSet(View av, Object objAdsorption) {
         ItemAdsorption itemAdsorption = (ItemAdsorption) objAdsorption;
-        TextView atv = adsorptionView.findViewById(R.id.tv);
+        TextView atv = av.findViewById(R.id.tv);
         if (!TextUtils.equals(itemAdsorption.strIndex, atv.getText())) {
             atv.setText(itemAdsorption.strIndex);
         }
@@ -87,8 +88,7 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
     private void onItemDataSet(View item, int position) {
         ItemAdsorptionAdapter ada = (ItemAdsorptionAdapter) items.get(position);
         if (getItemViewType(position) == ADSORPTION_TYPE) {
-            TextView tv = item.findViewById(R.id.tv);
-            tv.setText(((ItemAdsorption) ada.itemAdsorption).strIndex);
+            onAdsorptionItemSet(item, ada.itemAdsorption);
             return;
         }
 
