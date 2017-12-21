@@ -100,7 +100,7 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
         @Override
         public void onClick(View v) {
             final int adsorptionPosition = (int) v.getTag();
-            recyclerView.scrollToPosition(adsorptionPosition);
+            recyclerView.smoothScrollToPosition(adsorptionPosition);
         }
     };
 
