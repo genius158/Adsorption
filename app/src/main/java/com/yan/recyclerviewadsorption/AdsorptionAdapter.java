@@ -60,7 +60,7 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final View item = holder.itemView;
         item.setTag(R.id.tag_adsorption, items.get(position));
-        item.setTag(R.id.tag_position, position);
+
         ItemAdsorptionAdapter ada = (ItemAdsorptionAdapter) items.get(position);
         if (getItemViewType(position) == ADSORPTION_TYPE) {
             TextView tv = item.findViewById(R.id.tv);
@@ -99,6 +99,9 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
     private final View.OnClickListener onAdsorptionClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (v.getTag() == null) {
+                return;
+            }
             final int adsorptionPosition = (int) v.getTag();
             recyclerView.smoothScrollToPosition(adsorptionPosition);
         }
@@ -136,24 +139,20 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
         }
         tv.setText(((ItemAdsorption) adsorption.itemAdsorption).strIndex);
 
-        int position = (int) v.getTag(R.id.tag_position);
-
         if (adsorptionPositionTask != null && !adsorptionPositionTask.isCancelled()) {
             adsorptionPositionTask.cancel(true);
         }
-        adsorptionPositionTask = new AsyncTask<Integer, Void, Integer>() {
+        adsorptionPositionTask = new AsyncTask<ItemAdsorptionAdapter, Void, Integer>() {
             @Override
-            protected Integer doInBackground(Integer... datas) {
-                int position = datas[0];
-                ItemAdsorptionAdapter dataAdapter = (ItemAdsorptionAdapter) items.get(position);
-                if (dataAdapter.isAdsorption) {
-                    return position;
+            protected Integer doInBackground(ItemAdsorptionAdapter... datas) {
+                ItemAdsorptionAdapter iaa = datas[0];
+                if (iaa.isAdsorption) {
+                    return items.indexOf(iaa);
                 }
 
-                ItemAdsorption ia = (ItemAdsorption) dataAdapter.itemAdsorption;
                 for (int i = 0; i < items.size(); i++) {
-                    ItemAdsorptionAdapter ada = (ItemAdsorptionAdapter) items.get(i);
-                    if (ada.itemData == null && ada.itemAdsorption == ia) {
+                    ItemAdsorptionAdapter ia = (ItemAdsorptionAdapter) items.get(i);
+                    if (ia.itemData == null && ia.itemAdsorption == iaa.itemAdsorption) {
                         return i;
                     }
                 }
@@ -162,11 +161,9 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
 
             @Override
             protected void onPostExecute(Integer integer) {
-                if (integer != null) {
-                    adsorptionView.setTag(integer);
-                }
+                adsorptionView.setTag(integer);
             }
-        }.execute(position);
+        }.execute(adsorption);
     }
 
     @Override
