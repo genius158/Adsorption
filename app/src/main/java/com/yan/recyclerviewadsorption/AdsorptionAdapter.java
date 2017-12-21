@@ -1,10 +1,10 @@
 package com.yan.recyclerviewadsorption;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -109,6 +109,7 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
                 }
             }
         }
+        recyclerView.stopScroll();
         recyclerView.smoothScrollToPosition(scrollToPosition);
     }
 
@@ -120,10 +121,9 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
             ViewGroup viewGroup = (ViewGroup) recyclerView.getParent();
             if (adsorptionView == null) {
                 FrameLayout frameLayout = new FrameLayout(context);
-                frameLayout.setLayoutParams(recyclerView.getLayoutParams());
                 frameLayout.setPadding(recyclerView.getPaddingLeft(), recyclerView.getPaddingTop()
                         , recyclerView.getPaddingRight(), recyclerView.getPaddingBottom());
-                viewGroup.addView(frameLayout);
+                viewGroup.addView(frameLayout, recyclerView.getLayoutParams());
 
                 adsorptionView = LayoutInflater.from(context).inflate(R.layout.adsorption, frameLayout, false);
                 adsorptionView.setOnClickListener(onAdsorptionClick);
@@ -133,7 +133,7 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
             }
             recyclerView.addOnScrollListener(onScrollListener);
         } catch (Exception e) {
-            Log.w(TAG, "onAttachedToRecyclerView: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -189,7 +189,6 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
     protected boolean areItemsTheSame(Object oldItem, Object newItem) {
         if ((oldItem instanceof ItemAdsorption) && (newItem instanceof ItemAdsorption)) {
             return ((ItemAdsorption) oldItem).strIndex.equals(((ItemAdsorption) newItem).strIndex);
-
         } else if ((oldItem instanceof ItemData) && (newItem instanceof ItemData)) {
             return ((ItemData) oldItem).resId == ((ItemData) newItem).resId;
         }

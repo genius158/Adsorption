@@ -2,7 +2,6 @@ package com.yan.recyclerviewadsorption;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -49,12 +48,27 @@ public class MainActivity extends AppCompatActivity {
         objects.add(ia4.clone().setItemData(new ItemData(R.mipmap.ic_launcher_round)));
         objects.add(ia4.clone().setItemData(new ItemData(R.mipmap.ic_launcher)));
         objects.add(ia4.clone().setItemData(new ItemData(R.mipmap.ic_launcher_round)));
+        objects.add(ia4.clone().setItemData(new ItemData(R.mipmap.ic_launcher_round)));
+        objects.add(ia4.clone().setItemData(new ItemData(R.mipmap.ic_launcher)));
+        objects.add(ia4.clone().setItemData(new ItemData(R.mipmap.ic_launcher_round)));
+        objects.add(ia4.clone().setItemData(new ItemData(R.mipmap.ic_launcher_round)));
+        objects.add(ia4.clone().setItemData(new ItemData(R.mipmap.ic_launcher_round)));
+        objects.add(ia4.clone().setItemData(new ItemData(R.mipmap.ic_launcher)));
+        objects.add(ia4.clone().setItemData(new ItemData(R.mipmap.ic_launcher_round)));
+        objects.add(ia4.clone().setItemData(new ItemData(R.mipmap.ic_launcher_round)));
+        objects.add(ia4.clone().setItemData(new ItemData(R.mipmap.ic_launcher)));
+        objects.add(ia4.clone().setItemData(new ItemData(R.mipmap.ic_launcher_round)));
+        objects.add(ia4.clone().setItemData(new ItemData(R.mipmap.ic_launcher_round)));
+        objects.add(ia4.clone().setItemData(new ItemData(R.mipmap.ic_launcher_round)));
+        objects.add(ia4.clone().setItemData(new ItemData(R.mipmap.ic_launcher)));
+        objects.add(ia4.clone().setItemData(new ItemData(R.mipmap.ic_launcher_round)));
 
         RecyclerView rv = findViewById(R.id.rv);
-        rv.setLayoutManager(new LinearLayoutManager(this));
+        rv.setLayoutManager(new SmoothScrollLayoutManager(this));
         final AdsorptionAdapter adsorptionAdapter = new AdsorptionAdapter(this);
         rv.setAdapter(adsorptionAdapter);
 
         adsorptionAdapter.replace(objects);
     }
+
 }
