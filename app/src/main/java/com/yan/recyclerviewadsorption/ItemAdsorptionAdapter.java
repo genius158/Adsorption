@@ -6,16 +6,16 @@ package com.yan.recyclerviewadsorption;
 
 public class ItemAdsorptionAdapter<T, V> implements Cloneable {
     public boolean isAdsorption;
-    public T adsorptionData;
+    public T itemAdsorption;
     public V itemData;
 
-    public ItemAdsorptionAdapter(boolean isAdsorption, T adsorptionData) {
+    public ItemAdsorptionAdapter(boolean isAdsorption, T itemAdsorption) {
         this.isAdsorption = isAdsorption;
-        this.adsorptionData = adsorptionData;
+        this.itemAdsorption = itemAdsorption;
     }
 
-    public ItemAdsorptionAdapter(boolean isAdsorption, T adsorptionData, V itemData) {
-        this(isAdsorption, adsorptionData);
+    public ItemAdsorptionAdapter(boolean isAdsorption, T itemAdsorption, V itemData) {
+        this(isAdsorption, itemAdsorption);
         setItemData(itemData);
     }
 

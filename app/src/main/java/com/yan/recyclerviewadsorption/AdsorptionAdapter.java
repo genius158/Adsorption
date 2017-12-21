@@ -64,7 +64,7 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
         ItemAdsorptionAdapter ada = (ItemAdsorptionAdapter) items.get(position);
         if (getItemViewType(position) == ADSORPTION_TYPE) {
             TextView tv = item.findViewById(R.id.tv);
-            tv.setText(((ItemAdsorption) ada.adsorptionData).strIndex);
+            tv.setText(((ItemAdsorption) ada.itemAdsorption).strIndex);
             return;
         }
 
@@ -130,11 +130,11 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
     private void setAdsorptionData(View v) {
         ItemAdsorptionAdapter adsorption = (ItemAdsorptionAdapter) v.getTag(R.id.tag_adsorption);
         TextView tv = adsorptionView.findViewById(R.id.tv);
-        String data = ((ItemAdsorption) adsorption.adsorptionData).strIndex;
+        String data = ((ItemAdsorption) adsorption.itemAdsorption).strIndex;
         if (adsorptionView.getTag() != null && TextUtils.equals(tv.getText(), data)) {
             return;
         }
-        tv.setText(((ItemAdsorption) adsorption.adsorptionData).strIndex);
+        tv.setText(((ItemAdsorption) adsorption.itemAdsorption).strIndex);
 
         int position = (int) v.getTag(R.id.tag_position);
 
@@ -150,10 +150,10 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
                     return position;
                 }
 
-                ItemAdsorption ai = (ItemAdsorption) dataAdapter.adsorptionData;
+                ItemAdsorption ia = (ItemAdsorption) dataAdapter.itemAdsorption;
                 for (int i = 0; i < items.size(); i++) {
                     ItemAdsorptionAdapter ada = (ItemAdsorptionAdapter) items.get(i);
-                    if (ada.itemData == null && ada.adsorptionData == ai) {
+                    if (ada.itemData == null && ada.itemAdsorption == ia) {
                         return i;
                     }
                 }
