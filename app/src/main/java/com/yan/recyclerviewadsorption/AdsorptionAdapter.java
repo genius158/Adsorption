@@ -109,7 +109,7 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
                 }
             }
         }
-        recyclerView.stopScroll();
+
         recyclerView.smoothScrollToPosition(scrollToPosition);
     }
 
