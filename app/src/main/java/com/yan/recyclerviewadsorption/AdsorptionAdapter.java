@@ -130,7 +130,7 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
                 adsorptionView.setOnClickListener(onAdsorptionClick);
 
                 frameLayout.addView(adsorptionView);
-                frameLayout.setVisibility(View.INVISIBLE);
+                frameLayout.setVisibility(View.GONE);
             }
             recyclerView.addOnScrollListener(onScrollListener);
         } catch (Exception e) {
