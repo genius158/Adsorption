@@ -51,7 +51,7 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (adsorptionView.getTag() == null) {
+        if (adsorptionView.getTag(R.id.tag_position) == null) {
             onAdsorptionDataSet(((ItemAdsorptionAdapter) items.get(0)).itemAdsorption);
         }
 
@@ -157,6 +157,7 @@ public class AdsorptionAdapter extends BaseDiffAdapter<Object, RecyclerView.View
             }
             final int outPosition = (int) adsorptionOutView.getTag(R.id.tag_position);
             final int position = (int) adsorptionAreaView.getTag(R.id.tag_position);
+
             adsorptionView.setTag(R.id.tag_position, adsorptionOutView.getTag(R.id.tag_position));
 
             ItemAdsorptionAdapter adsorption = (ItemAdsorptionAdapter) items.get(position);
